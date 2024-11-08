@@ -36,7 +36,7 @@ void Juego::turnos(int turno) {
     	jugadores[turno].ponerMarcador(&tablero, filas);
         tablero.Mostrar();
         
-        if (jugadores[turno].verificarTurno(filas)) {
+        if (jugadores[turno].verificarPierdeTurno(filas)) {
             cout << "El jugador pierde el turno.\n";
             jugadores[turno].reiniciarAvances(&tablero);
             return;
