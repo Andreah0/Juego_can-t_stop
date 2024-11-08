@@ -67,7 +67,6 @@ void Jugador::ponerMarcador(Tablero* tablero, pair<int, int> filas) {
     int fila1 = filas.first - 2;
     int fila2 = filas.second - 2;
 
-    // Contar cuántas filas tienen marcadores temporales
     int filasConMarcador = 0;
     for (int i = 0; i < 11; i++) {
         if (avancesTemporales[i] != avances[i]) {
@@ -75,7 +74,6 @@ void Jugador::ponerMarcador(Tablero* tablero, pair<int, int> filas) {
         }
     }
 
-    // Caso cuando tiene exactamente 2 filas marcadas y ambas nuevas filas no tienen marcador
     if (filasConMarcador == 2 &&
         avancesTemporales[fila1] == avances[fila1] && avancesTemporales[fila2] == avances[fila2]) {
         
@@ -83,6 +81,10 @@ void Jugador::ponerMarcador(Tablero* tablero, pair<int, int> filas) {
         cout << "Elige una fila para marcar: 1. Fila " << fila1 + 2 
              << " 2. Fila " << fila2 + 2 << endl;
         cin >> eleccion;
+        while (eleccion != 1 && eleccion != 2) {
+            cout << "Opción no válida" << endl;
+            cin >> eleccion;
+        }
         
         if (eleccion == 1) {
             avanzarMarcador(tablero, fila1);
@@ -92,16 +94,13 @@ void Jugador::ponerMarcador(Tablero* tablero, pair<int, int> filas) {
         return;
     }
 
-    // Caso cuando ya tiene 3 filas marcadas
     if (filasConMarcador == 3) {
-        // Si ambas filas son iguales, solo avanza en una
         if (fila1 == fila2) {
             if (avancesTemporales[fila1] != avances[fila1]) {
                 avanzarMarcador(tablero, fila1);
                 avanzarMarcador(tablero, fila1);
             }
         } else {
-            // Avanza en las filas ya marcadas, sin marcar una nueva
             if (avancesTemporales[fila1] != avances[fila1]) {
                 avanzarMarcador(tablero, fila1);
             }
@@ -112,7 +111,6 @@ void Jugador::ponerMarcador(Tablero* tablero, pair<int, int> filas) {
         return;
     }
 
-    // Caso general: avanzar o marcar si no hay 3 filas marcadas aún
     avanzarMarcador(tablero, fila1);
     if (fila1 != fila2) {
         avanzarMarcador(tablero, fila2);
@@ -127,6 +125,8 @@ void Jugador::avancesJugador(int fila){
 }
 
 void Jugador::avanzarMarcador(Tablero* tablero, int fila) {
+
+    
     if (avancesTemporales[fila] >= 0) {
         tablero->tablero[fila][avancesTemporales[fila]].limpiarPosicion(color);
         avancesJugador(fila);
@@ -135,14 +135,14 @@ void Jugador::avanzarMarcador(Tablero* tablero, int fila) {
     }
     
     tablero->tablero[fila][avancesTemporales[fila]].marcarPosicion(color);
+    
 }
 
 
-bool Jugador::verificarTurno(pair<int, int> filas) {
+bool Jugador::verificarPierdeTurno(pair<int, int> filas) {
     int fila1 = filas.first - 2;
     int fila2 = filas.second - 2;
 
-    // Contar filas que tienen marcador
     int filasConMarcador = 0;
     for (int i = 0; i < 11; i++) {
         if (avancesTemporales[i] != avances[i]) {
@@ -150,40 +150,29 @@ bool Jugador::verificarTurno(pair<int, int> filas) {
         }
     }
 
-    // Si ya tiene 3 filas marcadas
     if (filasConMarcador == 3) {
         bool fila1YaMarcada = (fila1 >= 0 && avancesTemporales[fila1] != avances[fila1]);
         bool fila2YaMarcada = (fila2 >= 0 && avancesTemporales[fila2] != avances[fila2]);
 
         if (fila1 == fila2) {
-            // Si la fila seleccionada ya está marcada, puede avanzar en esa fila sin marcar una nueva
             return !fila1YaMarcada;
         } else {
-            // Si ambas filas seleccionadas son nuevas, pierde el turno
             if (!fila1YaMarcada && !fila2YaMarcada) {
                 return true;
             }
-            // Si al menos una fila ya está marcada, puede continuar
             return false;
         }
     }
 
-    // Si tiene exactamente 2 filas marcadas o menos, puede continuar
     return false;
 }
 
-
-
 void Jugador::reiniciarAvances(Tablero* tablero) {
     for(int i = 0; i < 11; i++) {
-        // Si hubo un movimiento en esta fila durante el turno
         if(avancesTemporales[i] != avances[i]) {
-            // Limpiar la posición actual
             if(avancesTemporales[i] >= 0) {
                 tablero->tablero[i][avancesTemporales[i]].limpiarPosicion(color);
             }
-            
-            // Restaurar la posición anterior si había una
             if(avances[i] >= 0) {
                 tablero->tablero[i][avances[i]].marcarPosicion(color);
             }
