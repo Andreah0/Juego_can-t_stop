@@ -11,7 +11,6 @@ class Jugador{
         string color;
         vector<int> dados;
         int avances[11];
-        int avancesRespaldo[11];
         int avancesTemporales[11];
         
         Jugador(string color);
@@ -22,8 +21,7 @@ class Jugador{
         void ponerMarcador(Tablero* tablero, pair<int, int> filas);
         void avancesJugador(int fila);
         void avanzarMarcador(Tablero* tablero, int fila);
-        bool verificarTurno(pair<int, int> filas);
-        bool filaOcupada(int fila);
+        bool verificarPierdeTurno(pair<int, int> filas);
         void actualizarAvances();
         void reiniciarAvances(Tablero* tablero);
         bool filasCompletadas();
